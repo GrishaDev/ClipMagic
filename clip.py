@@ -1,11 +1,16 @@
-import pyperclip
+#import pyperclip
 import time
 from pynput import keyboard
 from multiprocessing import Queue
+from jaraco import clipboard
+import re
+
 
 # ==================== Variables ====================
 
 data = ["random clip"]
+dataforprint = []
+
 invoker = keyboard.Controller()
 COMBINATION = {keyboard.Key.ctrl_l}
 NUMBERS = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -14,6 +19,9 @@ COPY = 'c'
 
 pastekeys = set()
 copykeys = set()
+
+a = 'add new sentence with this word 1234gdfgre'
+print(re.sub(r'[^a-zA-Z1-9 ]', '?', a))
 
 # ==================== waw =========================
 
@@ -26,21 +34,22 @@ print("===== Press Ctrl + alt + number from 0 9 to use the clipboard you need ==
 
 def copy():
     time.sleep(0.2)
-    data.insert(0, pyperclip.paste())
+    data.insert(0, clipboard.paste())
     if len(data) > 9:
         data.pop()
-    print("Added "+pyperclip.paste()+" To clipboard list")
+    print("'"+re.sub(r'[^a-zA-Z1-9 ]', '?', clipboard.paste())+"' added To clipboard list")
 
 
 def clip(num):
     time.sleep(0.2)
     if len(data) >= num:
         index = num - 1
-        print("Your clipboard is on "+data[index])
-        pyperclip.copy(data[index])
+        print("Your clipboard is on '"+re.sub(r'[^a-zA-Z1-9 ]', '?', data[index])+"'")
+        clipboard.copy(data[index])
 
 
 def on_press(key):
+    global dataforprint
     try:
         btn = key.char
     except AttributeError:
@@ -62,7 +71,11 @@ def on_press(key):
         copy()
         copykeys.clear()
     if key == keyboard.Key.esc:
-        print(data)
+        for word in data:
+            msg=re.sub(r'[^a-zA-Z1-9 ]', '?', word)
+            dataforprint.append(msg)
+        print(dataforprint)
+        dataforprint = []
 
 
 def on_release(key):
