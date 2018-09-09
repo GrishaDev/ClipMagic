@@ -64,6 +64,7 @@ class AppGui:
 
         self.master = master
         master.title("ClipMagic")
+        master.iconbitmap('icon.ico')
         master.pack_propagate(0)
         master.geometry("530x350")
         master.resizable(False, False)
@@ -203,6 +204,7 @@ def on_release(key):
         pass
 
 
+time.sleep(0.5)
 app = App()
 with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
     listener.join()
