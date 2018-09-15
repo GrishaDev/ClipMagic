@@ -63,6 +63,8 @@ class AppGui:
         global msg, current
 
         self.master = master
+        #master.wm_state('withdrawn')
+        #master.withdraw()
         master.title("ClipMagic")
         master.iconbitmap('icon.ico')
         master.pack_propagate(0)
@@ -140,7 +142,13 @@ class AppGui:
 def copy():
     global msg, current
     time.sleep(0.2)
-    data.insert(0, clipboard.paste())
+
+    try:
+        data.insert(0, clipboard.paste())
+    except:
+        print("Cant add that to clipboard")
+        return
+
     if len(data) > 9:
         data.pop()
     print("'"+re.sub(r'[^a-zA-Z1-9 ]', '.', clipboard.paste())+"' added To clipboard list")
