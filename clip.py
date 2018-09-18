@@ -3,7 +3,7 @@ import time
 from pynput import keyboard
 from multiprocessing import Queue
 import threading
-from jaraco import clipboard
+import pyperclip
 import re
 import tkinter as tk
 from tkinter import messagebox
@@ -103,7 +103,7 @@ class AppGui:
         self.clear_button = tk.Button(back, text="Clear", command=self.clear)
         self.clear_button.pack(padx=5, pady=2, anchor="se", side=tk.RIGHT)
 
-        first = clipboard.paste()
+        first = pyperclip.paste()
         print(first)
 
         if len(first) > 0:
@@ -141,18 +141,24 @@ class AppGui:
 # ==================== Methods ====================
 def copy():
     global msg, current
-    time.sleep(0.2)
+    time.sleep(0.1)
 
-    try:
-        data.insert(0, clipboard.paste())
-    except:
+    # try:
+    #     data.insert(0, pyperclip.paste())
+    # except:
+    #     print("Cant add that to clipboard")
+    #     return
+
+    if len(pyperclip.paste()) == 0:
         print("Cant add that to clipboard")
         return
+    else:
+        data.insert(0, pyperclip.paste())
 
     if len(data) > 9:
         data.pop()
-    print("'"+re.sub(r'[^a-zA-Z1-9 ]', '.', clipboard.paste())+"' added To clipboard list")
-    clipo = clipboard.paste()
+    print("'"+re.sub(r'[^a-zA-Z1-9 ]', '.', pyperclip.paste())+"' added To clipboard list")
+    clipo = pyperclip.paste()
     content = (clipo[:strlimit] + '..') if len(clipo) > strlimit else clipo
     current = content
     msg = "'"+content+"' added To clipboard list"
@@ -161,11 +167,11 @@ def copy():
 
 def clip(num):
     global current
-    time.sleep(0.2)
+    time.sleep(0.1)
     if len(data) >= num:
         index = num - 1
         print("Your clipboard is on '"+re.sub(r'[^a-zA-Z1-9 ]', '.', data[index])+"'")
-        clipboard.copy(data[index])
+        pyperclip.copy(data[index])
         content = (data[index][:strlimit] + '..') if len(data[index]) > strlimit else data[index]
         current = content
         appgui.update()
@@ -212,7 +218,8 @@ def on_release(key):
         pass
 
 
-time.sleep(0.5)
+time.sleep(0.1)
+
 app = App()
 with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
     listener.join()

@@ -15,11 +15,10 @@ if sys.platform == "win32":
 setup(name="clipmagic",
       version="1",
       description="Extended clipboard",
-      options={'build_exe': {'includes': ["jaraco", "tkinter"], 'include_files':[
+      options={'build_exe': {'includes': ["tkinter"], 'include_files':[
           (os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tk86t.dll'), os.path.join('lib', 'tk86t.dll')),
           (os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tcl86t.dll'), os.path.join('lib', 'tcl86t.dll')),
             'icon.ico',
-            'clipfixed.bat',
          ]}},
       executables=[Executable("clip.py", base=base, icon='icon.ico')])
 
