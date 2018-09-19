@@ -11,6 +11,8 @@ import os
 
 # ==================== Variables ====================
 
+guienabled = True
+
 appgui = None
 
 data = []
@@ -18,8 +20,8 @@ dataforprint = []
 
 invoker = keyboard.Controller()
 COMBINATION = {keyboard.Key.ctrl_l}
-NUMBERS = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-PASTE = keyboard.Key.alt_l
+NUMBERS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+ALT = keyboard.Key.alt_l
 COPY = 'c'
 
 pastekeys = set()
@@ -111,6 +113,7 @@ class AppGui:
         else:
             first = "Welcome"
             data.append(first)
+            pyperclip.copy("Welcome")
 
         current = (first[:strlimit] + '..') if len(first) > strlimit else first
         msg = "Welcome"
@@ -118,7 +121,7 @@ class AppGui:
 
     def help(self):
         print("hello")
-        messagebox.showinfo("Help", "Press Ctrl + alt + number from 0 9 to use the clipboard you need")
+        messagebox.showinfo("Help", "Press Ctrl + alt + 1-9 to loop clipboard, and 0 to show/hide window")
         # data.append("waww")
         # self.mylist.delete(0, tk.END)
         # for index, line in enumerate(data, start=1):
@@ -136,6 +139,14 @@ class AppGui:
 
         self.current.config(text=currentsuffix+current)
         self.message.config(text=msg)
+
+    def hide(self):
+        self.master.withdraw()
+        print("hide")
+
+    def show(self):
+        self.master.deiconify()
+        print("show")
 
 
 # ==================== Methods ====================
@@ -177,6 +188,18 @@ def clip(num):
         appgui.update()
 
 
+def guiStatus():
+    global guienabled
+    time.sleep(0.1)
+
+    guienabled = not guienabled
+
+    if guienabled is False:
+        appgui.hide()
+    else:
+        appgui.show()
+
+
 def on_press(key):
     global dataforprint
     try:
@@ -187,14 +210,17 @@ def on_press(key):
     if btn in COMBINATION:
         pastekeys.add(key)
         copykeys.add(key)
-    if btn is PASTE or btn in NUMBERS:
+    if btn is ALT or btn in NUMBERS:
         pastekeys.add(key)
         if btn in NUMBERS:
             num = int(btn)
     if btn is COPY:
         copykeys.add(key)
     if len(pastekeys) >= 3:
-        clip(num)
+        if num is 0:
+            guiStatus()
+        else:
+            clip(num)
         pastekeys.clear()
     elif len(copykeys) >= 2:
         copy()
